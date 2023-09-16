@@ -1,9 +1,0 @@
-cmake_minimum_required(VERSION 3.6)
-
-project(bsp C CXX ASM)
-
-add_subdirectory(mcu)
-
-list(TRANSFORM MCU_INC PREPEND "${CMAKE_CURRENT_LIST_DIR}/")
-set(MCU_INC ${MCU_INC} PARENT_SCOPE)
-set(MCU_COMPILE_DEFS ${MCU_COMPILE_DEFS} PARENT_SCOPE)
