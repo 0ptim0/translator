@@ -1,15 +1,15 @@
 {
     "configurations": [
         {
-            "name": "arm",
+            "name": "tranlsator",
             "compilerPath": "/usr/bin/arm-none-eabi-gcc",
             "includePath": [
                 "${workspaceRoot}/**"
             ],
             "cStandard": "c99",
             "intelliSenseMode": "gcc-x64",
-            "configurationProvider": "ms-vscode.cmake-tools"
-        }
+            "configurationProvider": "ms-vscode.cmake-tools",
+        },
     ],
     "version": 4
 }
