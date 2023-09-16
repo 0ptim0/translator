@@ -2,20 +2,18 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "type": "cmake",
-            "label": "CMake: clean rebuild",
-            "command": "cleanRebuild",
-            "targets": [
-                "all"
-            ],
-            "group": "build",
-            "problemMatcher": [],
-            "detail": "CMake template clean rebuild task"
+            "label": "Build",
+            "type": "shell",
+            "command": "cd ${config:nuttx_path} && make",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "label": "Flash",
             "type": "shell",
-            "command": "west flash",
+            "command": "/usr/local/bin/openocd -s ${config:openocd_path}/scripts -f board/st_nucleo_f4.cfg -c \"program ${config:nuttx_path}/nuttx verify reset exit\""
         },
     ]
 }

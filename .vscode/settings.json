@@ -1,9 +1,7 @@
 {
-    "terminal.integrated.env.linux": {
-        "PATH": "$HOME/zephyrproject/zephyr/scripts:${env:PATH}",
-        "ZEPHYR_BASE": "${env:HOME}/zephyrproject/zephyr",
-    },
     "cortex-debug.armToolchainPath": "/usr/bin",
     "cortex-debug.openocdPath": "/usr/local/bin/openocd",
-    "cortex-debug.gdbPath": "/usr/bin/arm-none-eabi-gdb"
+    "cortex-debug.gdbPath": "/usr/bin/arm-none-eabi-gdb",
+    "nuttx_path": "${env:HOME}/nuttxspace/nuttx",
+    "openocd_path": "/usr/local/share/openocd"
 }

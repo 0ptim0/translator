@@ -7,9 +7,9 @@
             "type": "cortex-debug",
             "cwd": "${workspaceRoot}",
             "servertype": "openocd",
-            "executable": "build/zephyr/zephyr.elf",
+            "executable": "${config:nuttx_path}/nuttx",
             "configFiles": [
-                "/usr/local/share/openocd/scripts/board/st_nucleo_f4.cfg"
+                "${config:openocd_path}/board/st_nucleo_f4.cfg"
             ],
         },
     ],
