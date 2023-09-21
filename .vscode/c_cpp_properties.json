@@ -2,14 +2,20 @@
     "configurations": [
         {
             "name": "tranlsator",
-            "compilerPath": "/usr/bin/arm-none-eabi-gcc",
             "includePath": [
-                "${workspaceRoot}/**",
-                "${config:nuttx_path}/**"
+                "${config:nuttx_path}/**",
+                "${workspaceRoot}/**"
             ],
             "cStandard": "c99",
             "intelliSenseMode": "gcc-x64",
-            "configurationProvider": "ms-vscode.cmake-tools"
+            "browse": {
+                "path": [
+                    "${workspaceFolder}, ${config:nuttx_path}"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "cppStandard": "c++11"
         }
     ],
     "version": 4

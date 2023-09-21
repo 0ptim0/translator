@@ -1,5 +1,5 @@
 include $(APPDIR)/Make.defs
-MAINSRC = translator_main.cxx
+MAINSRC = main.cpp
 
 PROGNAME = translator
 APPNAME = translator

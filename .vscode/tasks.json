@@ -4,11 +4,16 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "cd ${config:nuttx_path} && make",
+            "command": "cd ${config:nuttx_path} && cp .config ${workspaceFolder}/.config && make apps_clean && make",
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Configure",
+            "type": "shell",
+            "command": "cd ${config:nuttx_path} && make distclean && ./tools/configure.sh nucleo-f4x1re:f401-nsh",
         },
         {
             "label": "Flash",
