@@ -1,10 +1,27 @@
 include $(APPDIR)/Make.defs
-MAINSRC = main.cpp
 
 PROGNAME = translator
 APPNAME = translator
 PRIORITY = SCHED_PRIORITY_DEFAULT
 STACKSIZE = $(CONFIG_DEFAULT_TASK_STACKSIZE)
 MODULE = $(CONFIG_TRANSLATOR)
+
+MAINSRC = main.cpp
+CSRCS += lib/libyaml/src/api.c
+CSRCS += lib/libyaml/src/dumper.c
+CSRCS += lib/libyaml/src/emitter.c
+CSRCS += lib/libyaml/src/loader.c
+CSRCS += lib/libyaml/src/parser.c
+CSRCS += lib/libyaml/src/reader.c
+CSRCS += lib/libyaml/src/scanner.c
+CSRCS += lib/libyaml/src/writer.c
+
+CFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/lib/libyaml/include
+CFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/include
+CFLAGS += -DHAVE_CONFIG_H
+CXXFLAGS += ${CFLAGS}
+
+VPATH += :lib/libyaml/src
+DEPPATH += --dep-path lib/libyaml/src
 
 include $(APPDIR)/Application.mk

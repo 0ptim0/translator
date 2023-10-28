@@ -9,8 +9,10 @@
             "servertype": "openocd",
             "executable": "${config:nuttx_path}/nuttx",
             "configFiles": [
-                "${config:openocd_path}/board/st_nucleo_f4.cfg"
+                "${config:openocd_path}/scripts/interface/stlink.cfg",
+                "${config:openocd_path}/scripts/board/st_nucleo_f4.cfg"
             ],
+            "showDevDebugOutput": "raw"
         },
     ],
 }

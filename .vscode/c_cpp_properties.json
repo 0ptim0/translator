@@ -4,7 +4,8 @@
             "name": "tranlsator",
             "includePath": [
                 "${config:nuttx_path}/**",
-                "${workspaceRoot}/**"
+                "${workspaceRoot}/**",
+                "${workspaceFolder}/lib/libyaml/include"
             ],
             "cStandard": "c99",
             "intelliSenseMode": "gcc-x64",

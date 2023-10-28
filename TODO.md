@@ -1,0 +1,2 @@
+- [x] add libyaml to project
+- [ ] add internal flash as a drive
