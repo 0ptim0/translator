@@ -5,7 +5,9 @@
             "includePath": [
                 "${config:nuttx_path}/**",
                 "${workspaceRoot}/**",
-                "${workspaceFolder}/lib/libyaml/include"
+                "${workspaceFolder}/lib/libyaml/include",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/interfaces"
             ],
             "cStandard": "c99",
             "intelliSenseMode": "gcc-x64",

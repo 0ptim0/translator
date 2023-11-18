@@ -13,12 +13,12 @@
         {
             "label": "Configure",
             "type": "shell",
-            "command": "cd ${config:nuttx_path} && make distclean && ./tools/configure.sh nucleo-f4x1re:f401-nsh",
+            "command": "cd ${config:nuttx_path} && make distclean && ./tools/configure.sh stm32f4discovery:usbnsh",
         },
         {
             "label": "Flash",
             "type": "shell",
-            "command": "/usr/local/bin/openocd -s ${config:openocd_path}/scripts -f board/st_nucleo_f4.cfg -c \"program ${config:nuttx_path}/nuttx verify reset exit\""
+            "command": "/usr/local/bin/openocd -s ${config:openocd_path}/scripts -f board/stm32f4discovery.cfg -c \"program ${config:nuttx_path}/nuttx verify reset exit\""
         },
     ]
 }
