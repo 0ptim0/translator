@@ -5,14 +5,16 @@
 
 #include "Translator.hpp"
 
-Translator t;
+Translator *translator;
 bool daemon_flag = false;
 
 static int daemon_task(int argc, char *argv[]) {
-    t.init();
+    translator = Translator::getInstance();
+    if (translator == nullptr) {
+        return -1;
+    }
     while (1) {
         sleep(1);
-        syslog(LOG_INFO, "Daemon strob");
     }
     return 0;
 }
@@ -25,7 +27,7 @@ int main(int argc, char **argv) {
                               daemon_task, NULL);
         (void)pid;
     } else {
-        syslog(LOG_INFO, "Here should be the translator commander %d", daemon_flag);
+        translator->commander(argc, argv);
     }
     return 0;
 }

@@ -1,13 +1,12 @@
 #include "Uart.hpp"
 
-#include <string.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <pthread.h>
+#include <string.h>
 #include <syslog.h>
+#include <unistd.h>
 
-Uart::Uart() {
-}
+Uart::Uart() {}
 
 Uart::~Uart() {
     if (this->fd > 0) {
@@ -38,5 +37,5 @@ void *Uart::handler(void *arg) {
     while (loop) {
         sleep(1);
     }
-    return NULL;
+    return nullptr;
 }

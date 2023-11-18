@@ -24,4 +24,4 @@ public:
     static void *handler(void *handler);
 };
 
-#endif // UART
+#endif  // UART
