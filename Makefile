@@ -27,6 +27,7 @@ CFLAGS += -DHAVE_CONFIG_H
 CXXFLAGS += ${CFLAGS}
 CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/
 CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/interfaces
+CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/RingBuffer
 
 # VPATH += :lib/libyaml/src
 # DEPPATH += --dep-path lib/libyaml/src

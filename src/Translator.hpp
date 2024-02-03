@@ -3,8 +3,6 @@
 
 #include "Interface.hpp"
 
-constexpr int TRANSLATOR_MAX_INTERFACES = 8;
-
 constexpr int TRANSLATOR_CFG_MAX_PATH_LENGTH = 32;
 constexpr char TRANSLATOR_CFG_DEFAULT_PATH[] = "/dev/fmc";
 
@@ -19,7 +17,7 @@ private:
 #endif
 
 private:
-    Interface *interfaces[TRANSLATOR_MAX_INTERFACES];
+    Interface *interfaces[IF_MAX_INTERFACES] = {0};
 
 private:
     Translator();
@@ -32,8 +30,12 @@ public:
     static Translator *getInstance();
 
 public:
+    int daemon(int argc, char **argv);
+    void daemon_help();
+
+public:
     int commander(int argc, char **argv);
-    void help();
+    void commander_help();
 
 public:
     int routine();

@@ -13,7 +13,7 @@ static int daemon_task(int argc, char *argv[]) {
         syslog(LOG_ERR, "Failed to allocate main obj");
         return -1;
     }
-    translator->commander(argc, argv);
+    translator->daemon(argc - 1, argv + 1);
     while (1) {
         translator->routine();
     }
