@@ -1,4 +1,4 @@
-#include "Uart.hpp"
+#include "Spi.hpp"
 
 #include <fcntl.h>
 #include <pthread.h>
@@ -6,16 +6,16 @@
 #include <syslog.h>
 #include <unistd.h>
 
-Uart::Uart() {}
+Spi::Spi() {}
 
-Uart::~Uart() {
+Spi::~Spi() {
     if (this->fd > 0) {
         close(this->fd);
     }
 }
 
-int Uart::init() {
-    strncpy(this->path, UART_DEFAULT_PATH, UART_MAX_PATH_LENGTH - 1);
+int Spi::init() {
+    strncpy(this->path, SPI_DEFAULT_PATH, SPI_MAX_PATH_LENGTH - 1);
     this->fd = open(this->path, O_RDWR);
     if (this->fd < 0) {
         return -1;
@@ -27,11 +27,12 @@ int Uart::init() {
     return 0;
 }
 
-int Uart::exec(char *cmd) {
+int Spi::exec(char *cmd) {
+    // Parse binary/string commands
     return 0;
 }
 
-void *Uart::handler(void *arg) {
+void *Spi::handler(void *arg) {
     bool loop = true;
     while (loop) {
         sleep(1);
