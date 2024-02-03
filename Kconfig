@@ -1,0 +1,6 @@
+config TRANSLATOR
+	tristate "Translator"
+	default n
+	depends on HAVE_CXX
+	---help---
+		Enable the communication bridge daemon

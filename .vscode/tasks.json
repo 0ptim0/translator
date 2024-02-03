@@ -1,16 +1,24 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "cmake",
-			"label": "CMake: clean rebuild",
-			"command": "cleanRebuild",
-			"targets": [
-				"all"
-			],
-			"group": "build",
-			"problemMatcher": [],
-			"detail": "CMake template clean rebuild task"
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "cd ${config:nuttx_path} && cp .config ${workspaceFolder}/.config && make apps_clean && make",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Configure",
+            "type": "shell",
+            "command": "cd ${config:nuttx_path} && make distclean && ./tools/configure.sh stm32f4discovery:usbnsh",
+        },
+        {
+            "label": "Flash",
+            "type": "shell",
+            "command": "/usr/local/bin/openocd -s ${config:openocd_path}/scripts -f board/stm32f4discovery.cfg -c \"program ${config:nuttx_path}/nuttx verify reset exit\""
+        },
+    ]
 }

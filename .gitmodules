@@ -1,3 +1,0 @@
-[submodule "bsp/mcu"]
-	path = bsp/mcu
-	url = https://github.com/0ptim0/mcu

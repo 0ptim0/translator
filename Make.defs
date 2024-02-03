@@ -1,0 +1,3 @@
+ifneq ($(CONFIG_TRANSLATOR),)
+CONFIGURED_APPS += translator
+endif

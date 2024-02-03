@@ -1,0 +1,3 @@
+- [x] add libyaml to project
+- [x] add basic classes for main singleton and interfaces
+- [ ] add internal flash as a drive

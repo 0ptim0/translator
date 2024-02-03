@@ -1,14 +1,24 @@
 {
     "configurations": [
         {
-            "name": "arm",
-            "compilerPath": "/usr/bin/arm-none-eabi-gcc",
+            "name": "tranlsator",
             "includePath": [
-                "${workspaceRoot}/**"
+                "${config:nuttx_path}/**",
+                "${workspaceRoot}/**",
+                "${workspaceFolder}/lib/libyaml/include",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/interfaces"
             ],
             "cStandard": "c99",
             "intelliSenseMode": "gcc-x64",
-            "configurationProvider": "ms-vscode.cmake-tools"
+            "browse": {
+                "path": [
+                    "${workspaceFolder}, ${config:nuttx_path}"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "cppStandard": "c++11"
         }
     ],
     "version": 4

@@ -2,34 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "f1",
-            "request": "launch",
-            "type": "cortex-debug",
-            "cwd": "${workspaceRoot}",
-            "servertype": "openocd",
-            "executable": "build/firmware/translator.elf",
-            "svdFile": "bsp/mcu/stm32f1/core/STM32F103.svd",
-            "showDevDebugOutput":"raw",
-            "searchDir": [
-                "/usr/local/share/openocd/scripts",],
-            "configFiles": [
-                "bsp/mcu/stm32f1/core/stm32f1.cfg"
-            ],
-        },
-        {
             "name": "f4",
             "request": "launch",
             "type": "cortex-debug",
             "cwd": "${workspaceRoot}",
             "servertype": "openocd",
-            "executable": "build/firmware/translator.elf",
-            "svdFile": "bsp/mcu/stm32f4/core/STM32F401.svd",
-            "showDevDebugOutput":"raw",
-            "searchDir": [
-                "/usr/local/share/openocd/scripts",],
+            "executable": "${config:nuttx_path}/nuttx",
             "configFiles": [
-                "bsp/mcu/stm32f4/core/stm32f4.cfg"
+                "${config:openocd_path}/scripts/interface/stlink.cfg",
+                "${config:openocd_path}/scripts/board/st_nucleo_f4.cfg"
             ],
+            "showDevDebugOutput": "raw"
         },
-    ]
+    ],
 }
