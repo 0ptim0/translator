@@ -9,7 +9,7 @@
 class RingBuffer {
 private:
     char* buffer;
-    int m_size;
+    size_t m_size;
     int head;
     int tail;
     pthread_mutex_t mtx;
@@ -41,9 +41,6 @@ public:
             tail = other.tail;
             buffer = new char[m_size];
             memcpy(buffer, other.buffer, m_size);
-            pthread_mutex_init(&mtx, NULL);
-            pthread_cond_init(&not_full, NULL);
-            pthread_cond_init(&not_empty, NULL);
         }
         return *this;
     }
@@ -92,7 +89,7 @@ public:
             pthread_cond_wait(&not_empty, &mtx);
         }
 
-        ssize_t max_size = this->m_size - freeSpace();
+        size_t max_size = this->m_size - freeSpace();
         max_size = size < max_size ? size : max_size;
 
         for (size_t i = 0; i < max_size; ++i) {
@@ -106,7 +103,7 @@ public:
         return max_size;
     }
 
-    int freeSpace() const { return (head - tail - 1 + m_size) % m_size; }
+    size_t freeSpace() const { return (head - tail - 1 + m_size) % m_size; }
 };
 
 #endif  // RINGBUFFER

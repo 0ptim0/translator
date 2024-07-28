@@ -1,18 +1,18 @@
 #ifndef UART
 #define UART
 
-#include "Interface.hpp"
+#include "InterfaceBase.hpp"
 
 constexpr const char UART_DEFAULT_PATH[] = "/dev/ttyS1";
 constexpr const char UART_DEFAULT_NAME[] = "uart0";
 
-class Uart : public Interface {
+class Uart : public InterfaceBase {
 private:
     unsigned baudrate = 115200;
 
 public:
     Uart();
-    Uart(const char *name, const char *path, int verbosity);
+    Uart(const char *name, const char *path);
     ~Uart();
 
 public:

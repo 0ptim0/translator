@@ -1,15 +1,15 @@
 #ifndef SPI
 #define SPI
 
-#include "Interface.hpp"
+#include "InterfaceBase.hpp"
 
 constexpr const char SPI_DEFAULT_PATH[] = "/dev/spi0";
 constexpr const char SPI_DEFAULT_NAME[] = "spi0";
 
-class Spi : public Interface {
+class Spi : public InterfaceBase {
 public:
     Spi();
-    Spi(const char *name, const char *path, int verbosity);
+    Spi(const char *name, const char *path);
     ~Spi();
 
 public:
