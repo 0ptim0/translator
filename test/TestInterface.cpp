@@ -18,7 +18,8 @@ char test_file_2[] = "test_file_2.txt";
 class TestInterface : public InterfaceBase {
 public:
     TestInterface(const char *name, const char *path, Mode mode)
-        : InterfaceBase(name, path, mode) {}
+        : InterfaceBase(name, path, mode) {
+    }
 
     ~TestInterface() {
         mq_close(this->src);

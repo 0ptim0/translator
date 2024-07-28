@@ -14,6 +14,14 @@ public:
 public:
     virtual int init() override;
     virtual int exec(const char *cmd) override;
+    virtual ssize_t write(const void *data, size_t size) override;
+    virtual ssize_t read(void *data, size_t size) override;
+
+private:
+    uint8_t mode;
+    uint8_t nwords;
+    uint8_t nbits;
+    uint32_t freq;
 };
 
 #endif  // SPI

@@ -31,6 +31,13 @@ InterfaceBase::~InterfaceBase() {
     }
 }
 
+ssize_t InterfaceBase::write(const void *data, size_t size) {
+    return ::write(fd, data, size);
+}
+ssize_t InterfaceBase::read(void *data, size_t size) {
+    return ::read(fd, data, size);
+}
+
 void *InterfaceBase::threadTx(void *arg) {
     InterfaceBase *inst = reinterpret_cast<InterfaceBase *>(arg);
 
@@ -62,7 +69,7 @@ void *InterfaceBase::threadTx(void *arg) {
 
         ssize_t wb = 0;
         while (wb < rb) {
-            wb += write(inst->fd, inst->tx_buf, rb);
+            wb += inst->write(inst->tx_buf, rb);
         }
 
         if (wb < 0) {
@@ -90,7 +97,7 @@ void *InterfaceBase::threadRx(void *arg) {
 
     while (1) {
         unsigned int prio = 1;
-        ssize_t rb = read(inst->fd, inst->rx_buf, buf_max_size);
+        ssize_t rb = inst->read(inst->rx_buf, buf_max_size);
         if (rb <= 0) {
             if (rb < 0)
                 syslog(LOG_ERR, "%s: failed to receive data", inst->m_name);

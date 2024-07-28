@@ -20,6 +20,8 @@ class InterfaceBase {
 public:
     virtual int init() = 0;
     virtual int exec(const char *cmd) = 0;
+    virtual ssize_t write(const void *data, size_t size);
+    virtual ssize_t read(void *data, size_t size);
 
 public:
     InterfaceBase() = delete;
