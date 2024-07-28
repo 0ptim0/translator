@@ -7,8 +7,8 @@
 #include <syslog.h>
 #include <unistd.h>
 
-#include "interfaces/Spi.hpp"
-#include "interfaces/Uart.hpp"
+#include "Interfaces/Spi.hpp"
+#include "Interfaces/Uart.hpp"
 
 Translator *Translator::inst = nullptr;
 
@@ -21,7 +21,7 @@ Translator *Translator::getInstance() {
     return new Translator();
 }
 
-void Translator::daemon_help() {
+void Translator::daemonHelp() {
     printf("Usage: translator [-h] [-v] [-r]\n");
     printf("Options:\n");
     printf("  -h \t Display this information\n");
@@ -34,7 +34,7 @@ int Translator::daemon(int argc, char **argv) {
     while ((opt = getopt(argc, argv, "hvr")) != -1) {
         switch (opt) {
             case 'h':
-                this->commander_help();
+                this->daemonHelp();
                 break;
             case 'v':
                 this->verbosity++;
@@ -44,7 +44,7 @@ int Translator::daemon(int argc, char **argv) {
                 break;
             default:
                 syslog(LOG_ERR, "Unknown argument");
-                this->commander_help();
+                this->daemonHelp();
                 return 1;
         }
     }
@@ -57,7 +57,7 @@ int Translator::daemon(int argc, char **argv) {
     return 0;
 }
 
-void Translator::commander_help() {
+void Translator::commanderHelp() {
     printf("Usage: translator [-h] [-v] [-r]\n");
     printf("Options:\n");
     printf("  -h \t Display this information\n");
@@ -70,7 +70,7 @@ int Translator::commander(int argc, char **argv) {
     while ((opt = getopt(argc, argv, "hvr")) != -1) {
         switch (opt) {
             case 'h':
-                this->commander_help();
+                this->commanderHelp();
                 break;
             case 'v':
                 this->verbosity++;
@@ -80,7 +80,7 @@ int Translator::commander(int argc, char **argv) {
                 break;
             default:
                 syslog(LOG_ERR, "Unknown argument");
-                this->commander_help();
+                this->commanderHelp();
                 return 1;
         }
     }

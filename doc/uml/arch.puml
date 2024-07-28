@@ -1,0 +1,38 @@
+@startuml
+
+struct Command {
+    type
+    data
+    size
+}
+
+circle user
+
+class Translator {
+    -queue[IF_NUM]
+    -flagInit
+    +init()
+    +exec()
+}
+
+abstract class Interface {
+    -handler
+    +init()
+    +exec()
+}
+
+user <-> Cli: COM
+
+Cli -- Translator
+
+Translator *-- Interface
+
+Interface <|-- Uart
+Interface <|-- Spi
+Interface <|-- I2c
+Interface <|-- Can
+Interface <|-- Eth
+Interface <|-- Rs485
+Interface <|-- Rs232
+
+@enduml

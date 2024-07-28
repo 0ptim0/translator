@@ -11,9 +11,14 @@
             }
         },
         {
-            "label": "Configure",
+            "label": "Clean",
             "type": "shell",
             "command": "cd ${config:nuttx_path} && make distclean && ./tools/configure.sh stm32f4discovery:usbnsh",
+        },
+        {
+            "label": "Configure",
+            "type": "shell",
+            "command": "cd ${config:nuttx_path} && make menuconfig",
         },
         {
             "label": "Flash",

@@ -7,7 +7,9 @@
                 "${workspaceRoot}/**",
                 "${workspaceFolder}/lib/libyaml/include",
                 "${workspaceFolder}/src",
-                "${workspaceFolder}/src/interfaces"
+                "${workspaceFolder}/src/Interfaces",
+                "${workspaceFolder}/src/RingBuffer",
+                "${workspaceFolder}/tools/probe"
             ],
             "cStandard": "c99",
             "intelliSenseMode": "gcc-x64",
