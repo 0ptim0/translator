@@ -18,7 +18,10 @@ Uart::Uart(const char *name, const char *path, interface::Mode mode)
 Uart::~Uart() {}
 
 int Uart::init() {
-    this->fd = open(this->m_path, O_RDWR);
+    int perm = this->m_mode == READ_ONLY    ? O_RDONLY
+               : this->m_mode == WRITE_ONLY ? O_WRONLY
+                                            : O_RDWR;
+    this->fd = open(this->m_path, perm);
     if (this->fd < 0) {
         syslog(LOG_ERR, "Failed to open %s in %s", this->m_name, this->m_path);
         syslog(LOG_ERR, "%s", strerror(errno));
@@ -27,7 +30,7 @@ int Uart::init() {
 
     struct mq_attr attr;
     attr.mq_flags = 0;
-    attr.mq_maxmsg = 100;
+    attr.mq_maxmsg = 1024;
     attr.mq_msgsize = sizeof(Message);
     attr.mq_curmsgs = 0;
     this->src = mq_open(this->m_queue, O_RDONLY | O_CREAT, 0666, &attr);

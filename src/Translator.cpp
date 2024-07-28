@@ -48,12 +48,11 @@ int Translator::daemon(int argc, char **argv) {
                 return 1;
         }
     }
-    interfaces[0] = new Uart("uart1", "/dev/ttyS0", interface::Mode::READ_WRITE);
+    interfaces[0] = new Uart("uart2", "/dev/ttyS2", interface::Mode::READ_ONLY);
+    interfaces[1] = new Spi("spi1", "/dev/spi1", interface::Mode::WRITE_ONLY);
     interfaces[0]->init();
-    interfaces[1] = new Spi("spi1", "/dev/spi1", interface::Mode::READ_WRITE);
     interfaces[1]->init();
     interfaces[0]->connect(interfaces[1]);
-    interfaces[1]->connect(interfaces[0]);
     return 0;
 }
 

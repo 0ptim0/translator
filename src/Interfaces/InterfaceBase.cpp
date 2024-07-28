@@ -34,8 +34,6 @@ InterfaceBase::~InterfaceBase() {
 void *InterfaceBase::threadTx(void *arg) {
     InterfaceBase *inst = reinterpret_cast<InterfaceBase *>(arg);
 
-    char buf[buf_max_size];
-
     while (1) {
         unsigned int prio;
         Message msg;
@@ -48,8 +46,8 @@ void *InterfaceBase::threadTx(void *arg) {
         }
 
         ssize_t rb = 0;
-        while (rb < msg.size) {
-            rb += msg.buf->read(buf, msg.size);
+        while (static_cast<unsigned>(rb) < msg.size) {
+            rb += msg.buf->read(inst->tx_buf, msg.size);
         }
 
         if (rb <= 0) {
@@ -64,7 +62,7 @@ void *InterfaceBase::threadTx(void *arg) {
 
         ssize_t wb = 0;
         while (wb < rb) {
-            wb += write(inst->fd, buf, rb);
+            wb += write(inst->fd, inst->tx_buf, rb);
         }
 
         if (wb < 0) {
@@ -90,11 +88,9 @@ void *InterfaceBase::threadRx(void *arg) {
         msg[i]->buf = ring_buf[i];
     }
 
-    char buf[buf_max_size] = {0};
-
     while (1) {
         unsigned int prio = 1;
-        ssize_t rb = read(inst->fd, buf, buf_max_size);
+        ssize_t rb = read(inst->fd, inst->rx_buf, buf_max_size);
         if (rb <= 0) {
             if (rb < 0)
                 syslog(LOG_ERR, "%s: failed to receive data", inst->m_name);
@@ -106,7 +102,7 @@ void *InterfaceBase::threadRx(void *arg) {
             if (inst->dst[i] > 0) {
                 ssize_t wb = 0;
                 while (wb < rb) {
-                    wb += msg[i]->buf->write(buf, rb);
+                    wb += msg[i]->buf->write(inst->rx_buf, rb);
                 }
                 msg[i]->size = rb;
 
@@ -148,12 +144,14 @@ int InterfaceBase::run() {
     if (this->m_mode == WRITE_ONLY || this->m_mode == READ_WRITE) {
         pthread_attr_t tx_attr = {0};
         pthread_attr_init(&tx_attr);
+        pthread_attr_setstacksize(&tx_attr, 4096);
         pthread_create(&this->pthread_tx, &tx_attr, this->threadTx,
                        static_cast<InterfaceBase *>(this));
     }
     if (this->m_mode == READ_ONLY || this->m_mode == READ_WRITE) {
         pthread_attr_t rx_attr = {0};
         pthread_attr_init(&rx_attr);
+        pthread_attr_setstacksize(&rx_attr, 4096);
         pthread_create(&this->pthread_rx, &rx_attr, this->threadRx,
                        static_cast<InterfaceBase *>(this));
     }

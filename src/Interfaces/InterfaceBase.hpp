@@ -9,7 +9,7 @@ constexpr int name_max_length = 16;
 constexpr int path_max_length = 32;
 constexpr int queue_path_max_length = 48;
 constexpr int max_interfaces = 8;
-constexpr int buf_max_size = 1024;
+constexpr int buf_max_size = 256;
 enum Mode {
     READ_ONLY = 1,
     WRITE_ONLY = 2,
@@ -37,6 +37,10 @@ protected:
     mqd_t src;
     mqd_t dst[max_interfaces] = {0};
     int run();
+
+protected:
+    char tx_buf[buf_max_size] = {0};
+    char rx_buf[buf_max_size] = {0};
 
 public:
     static void *threadRx(void *arg);
