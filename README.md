@@ -1,10 +1,11 @@
 # Translator
 Provides a commucation bridge between different interfaces
 
-### Links
-[Translator_Hardware](https://oshwlab.com/optim0/translator)
+### Board
+[Translator PCB](https://oshwlab.com/optim0/translator)  
+<img src="doc/board.jpg" alt="drawing" style="width:400px;"/>
 
-### Interface table
+### Supported interfaces
 - USART
 - RS232
 - RS485
@@ -12,5 +13,3 @@ Provides a commucation bridge between different interfaces
 - ETH
 - SPI
 - I2C
-
-### Command Line Interface
