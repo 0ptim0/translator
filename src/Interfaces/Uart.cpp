@@ -12,33 +12,10 @@
 
 using namespace interface;
 
-Uart::Uart() {
-    strncpy(this->m_name, UART_DEFAULT_NAME, name_max_length);
-    strncpy(this->m_path, UART_DEFAULT_PATH, path_max_length);
-}
+Uart::Uart(const char *name, const char *path, interface::Mode mode)
+    : InterfaceBase(name, path, mode) {}
 
-Uart::Uart(const char *name, const char *path) {
-    if (name != nullptr) {
-        strncpy(this->m_name, name, name_max_length);
-    }
-    if (path != nullptr) {
-        strncpy(this->m_path, path, path_max_length);
-    }
-}
-
-Uart::~Uart() {
-    if (this->fd > 0) {
-        close(this->fd);
-    }
-    if (this->src > 0) {
-        mq_close(this->src);
-    }
-    for (int i = 0; i < max_interfaces; ++i) {
-        if (this->dst[i] > 0) {
-            mq_close(this->dst[i]);
-        }
-    }
-}
+Uart::~Uart() {}
 
 int Uart::init() {
     this->fd = open(this->m_path, O_RDWR);
@@ -65,6 +42,6 @@ int Uart::init() {
     return 0;
 }
 
-int Uart::exec(char *cmd) {
+int Uart::exec(const char *cmd) {
     return 0;
 }

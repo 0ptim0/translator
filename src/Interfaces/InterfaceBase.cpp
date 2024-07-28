@@ -1,9 +1,9 @@
 #include "InterfaceBase.hpp"
 
+#include <errno.h>
 #include <fcntl.h>
 #include <syslog.h>
 #include <unistd.h>
-#include <errno.h>
 
 #include "Message.hpp"
 #include "RingBuffer.hpp"
@@ -17,7 +17,19 @@ InterfaceBase::InterfaceBase(const char *name, const char *path, Mode mode)
     sprintf(this->m_queue, "/mq_%s", this->m_name);
 }
 
-InterfaceBase::~InterfaceBase() {}
+InterfaceBase::~InterfaceBase() {
+    if (this->fd > 0) {
+        close(this->fd);
+    }
+    if (this->src > 0) {
+        mq_close(this->src);
+    }
+    for (int i = 0; i < max_interfaces; ++i) {
+        if (this->dst[i] > 0) {
+            mq_close(this->dst[i]);
+        }
+    }
+}
 
 void *InterfaceBase::threadTx(void *arg) {
     InterfaceBase *inst = reinterpret_cast<InterfaceBase *>(arg);

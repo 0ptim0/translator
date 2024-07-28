@@ -2,6 +2,7 @@
 #define INTERFACE
 
 #include <mqueue.h>
+#include <pthread.h>
 
 namespace interface {
 constexpr int name_max_length = 16;

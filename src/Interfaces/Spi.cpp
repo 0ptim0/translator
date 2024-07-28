@@ -10,32 +10,12 @@
 
 #include "Message.hpp"
 
-Spi::Spi() {
-    strncpy(this->m_name, SPI_DEFAULT_NAME, name_max_length);
-    strncpy(this->m_path, SPI_DEFAULT_PATH, path_max_length);
-}
+using namespace interface;
 
-Spi::Spi(const char *name, const char *path) {
-    if (name != nullptr) {
-        strncpy(this->m_name, name, name_max_length);
-    }
-    if (path != nullptr) {
-        strncpy(this->m_path, path, path_max_length);
-    }
-}
+Spi::Spi(const char *name, const char *path, interface::Mode mode)
+    : InterfaceBase(name, path, mode) {}
 
 Spi::~Spi() {
-    if (this->fd > 0) {
-        close(this->fd);
-    }
-    if (this->src > 0) {
-        mq_close(this->src);
-    }
-    for (int i = 0; i < max_interfaces; ++i) {
-        if (this->dst[i] > 0) {
-            mq_close(this->dst[i]);
-        }
-    }
 }
 
 int Spi::init() {
@@ -60,20 +40,10 @@ int Spi::init() {
         return -1;
     }
 
-    pthread_t tx_pthread = {0};
-    pthread_attr_t tx_attr = {0};
-    pthread_attr_init(&tx_attr);
-    pthread_create(&tx_pthread, &tx_attr, this->threadTx,
-                   static_cast<InterfaceBase *>(this));
-
-    pthread_t rx_pthread = {0};
-    pthread_attr_t rx_attr = {0};
-    pthread_attr_init(&rx_attr);
-    pthread_create(&rx_pthread, &rx_attr, this->threadRx,
-                   static_cast<InterfaceBase *>(this));
+    this->run();
     return 0;
 }
 
-int Spi::exec(char *cmd) {
+int Spi::exec(const char *cmd) {
     return 0;
 }
