@@ -3,7 +3,7 @@ Provides a commucation bridge between different interfaces
 
 ### Board
 [Translator PCB](https://oshwlab.com/optim0/translator)  
-<img src="doc/board.jpg" alt="board" style="width:400px;"/>
+<img src="doc/img/board.jpg" alt="board" style="width:400px;"/>
 
 ### Supported interfaces
 - USART
