@@ -1,14 +1,14 @@
 #ifndef TRANSLATOR
 #define TRANSLATOR
 
-#include "InterfaceBase.hpp"
+#include "Base.hpp"
 
 class Translator {
 private:
     static Translator *inst;
 
 private:
-    interface::InterfaceBase *interfaces[interface::max_interfaces] = {0};
+    interface::Base *interfaces[interface::max_interfaces] = {0};
 
 private:
     Translator();

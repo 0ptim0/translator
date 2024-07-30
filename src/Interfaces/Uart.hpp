@@ -1,22 +1,22 @@
 #ifndef UART
 #define UART
 
-#include "InterfaceBase.hpp"
+#include "Base.hpp"
 
-constexpr const char UART_DEFAULT_PATH[] = "/dev/ttyS1";
-constexpr const char UART_DEFAULT_NAME[] = "uart0";
+namespace uart {
 
-class Uart : public interface::InterfaceBase {
+class Interface : public interface::Base {
 private:
     unsigned baudrate = 115200;
 
 public:
-    Uart(const char *name, const char *path, interface::Mode mode);
-    ~Uart();
+    Interface(const char *name, const char *path, interface::Mode mode);
+    ~Interface();
 
 public:
     virtual int init() override;
     virtual int exec(const char *cmd) override;
 };
+}  // namespace uart
 
 #endif  // UART

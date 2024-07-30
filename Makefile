@@ -17,9 +17,10 @@ MAINSRC = main.cpp
 # CSRCS += lib/libyaml/src/writer.c
 
 CXXSRCS += src/Translator.cpp
-CXXSRCS += src/Interfaces/InterfaceBase.cpp
+CXXSRCS += src/Interfaces/Base.cpp
 CXXSRCS += src/Interfaces/Uart.cpp
 CXXSRCS += src/Interfaces/Spi.cpp
+CXXSRCS += src/Interfaces/I2c.cpp
 
 # CFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/lib/libyaml/include
 # CFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/include

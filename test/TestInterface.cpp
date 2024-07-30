@@ -6,7 +6,7 @@
 #include <syslog.h>
 #include <unistd.h>
 
-#include "InterfaceBase.hpp"
+#include "Base.hpp"
 #include "Message.hpp"
 #include "probe.h"
 
@@ -15,10 +15,10 @@ using namespace interface;
 char test_file_1[] = "test_file_1.txt";
 char test_file_2[] = "test_file_2.txt";
 
-class TestInterface : public InterfaceBase {
+class TestInterface : public Base {
 public:
     TestInterface(const char *name, const char *path, Mode mode)
-        : InterfaceBase(name, path, mode) {
+        : Base(name, path, mode) {
     }
 
     ~TestInterface() {
@@ -77,8 +77,8 @@ TEST(InterfaceReadWrite) {
     close(fd);
 
     // Init two interfaces
-    InterfaceBase *if1 = new TestInterface("tf1", test_file_1, READ_ONLY);
-    InterfaceBase *if2 = new TestInterface("tf2", test_file_2, WRITE_ONLY);
+    Base *if1 = new TestInterface("tf1", test_file_1, READ_ONLY);
+    Base *if2 = new TestInterface("tf2", test_file_2, WRITE_ONLY);
     if1->connect(if2);
     if1->init();
     if2->init();

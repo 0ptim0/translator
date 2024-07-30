@@ -1,4 +1,4 @@
-#include "InterfaceBase.hpp"
+#include "Base.hpp"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -10,14 +10,14 @@
 
 using namespace interface;
 
-InterfaceBase::InterfaceBase(const char *name, const char *path, Mode mode)
+Base::Base(const char *name, const char *path, Mode mode)
     : m_mode(mode) {
     strncpy(this->m_name, name, name_max_length);
     strncpy(this->m_path, path, path_max_length);
     sprintf(this->m_queue, "/mq_%s", this->m_name);
 }
 
-InterfaceBase::~InterfaceBase() {
+Base::~Base() {
     if (this->fd > 0) {
         close(this->fd);
     }
@@ -31,15 +31,15 @@ InterfaceBase::~InterfaceBase() {
     }
 }
 
-ssize_t InterfaceBase::write(const void *data, size_t size) {
+ssize_t Base::write(const void *data, size_t size) {
     return ::write(fd, data, size);
 }
-ssize_t InterfaceBase::read(void *data, size_t size) {
+ssize_t Base::read(void *data, size_t size) {
     return ::read(fd, data, size);
 }
 
-void *InterfaceBase::threadTx(void *arg) {
-    InterfaceBase *inst = reinterpret_cast<InterfaceBase *>(arg);
+void *Base::threadTx(void *arg) {
+    Base *inst = reinterpret_cast<Base *>(arg);
 
     while (1) {
         unsigned int prio;
@@ -80,8 +80,8 @@ void *InterfaceBase::threadTx(void *arg) {
     }
 }
 
-void *InterfaceBase::threadRx(void *arg) {
-    InterfaceBase *inst = reinterpret_cast<InterfaceBase *>(arg);
+void *Base::threadRx(void *arg) {
+    Base *inst = reinterpret_cast<Base *>(arg);
 
     RingBuffer *ring_buf[max_interfaces];
     Message *msg[max_interfaces];
@@ -127,7 +127,7 @@ void *InterfaceBase::threadRx(void *arg) {
     }
 }
 
-int InterfaceBase::connect(InterfaceBase *cons) {
+int Base::connect(Base *cons) {
     for (int i = 0; i < max_interfaces; ++i) {
         if (this->dst[i] == 0) {
             this->dst[i] = mq_open(cons->m_queue, O_WRONLY);
@@ -147,20 +147,20 @@ int InterfaceBase::connect(InterfaceBase *cons) {
     return -1;
 }
 
-int InterfaceBase::run() {
+int Base::run() {
     if (this->m_mode == WRITE_ONLY || this->m_mode == READ_WRITE) {
         pthread_attr_t tx_attr = {0};
         pthread_attr_init(&tx_attr);
         pthread_attr_setstacksize(&tx_attr, 4096);
         pthread_create(&this->pthread_tx, &tx_attr, this->threadTx,
-                       static_cast<InterfaceBase *>(this));
+                       static_cast<Base *>(this));
     }
     if (this->m_mode == READ_ONLY || this->m_mode == READ_WRITE) {
         pthread_attr_t rx_attr = {0};
         pthread_attr_init(&rx_attr);
         pthread_attr_setstacksize(&rx_attr, 4096);
         pthread_create(&this->pthread_rx, &rx_attr, this->threadRx,
-                       static_cast<InterfaceBase *>(this));
+                       static_cast<Base *>(this));
     }
 
     return 0;

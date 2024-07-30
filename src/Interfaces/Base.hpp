@@ -16,7 +16,7 @@ enum Mode {
     READ_WRITE = 3
 };
 
-class InterfaceBase {
+class Base {
 public:
     virtual int init() = 0;
     virtual int exec(const char *cmd) = 0;
@@ -24,9 +24,9 @@ public:
     virtual ssize_t read(void *data, size_t size);
 
 public:
-    InterfaceBase() = delete;
-    InterfaceBase(const char *name, const char *path, Mode mode);
-    virtual ~InterfaceBase() = 0;
+    Base() = delete;
+    Base(const char *name, const char *path, Mode mode);
+    virtual ~Base() = 0;
 
 protected:
     char m_name[name_max_length] = {0};
@@ -49,7 +49,7 @@ public:
     static void *threadTx(void *arg);
 
 public:
-    int connect(InterfaceBase *dst);
+    int connect(Base *dst);
 };
 }  // namespace interface
 

@@ -27,7 +27,7 @@ CFLAGS += -Wsuggest-final-methods
 CFLAGS += -Wsuggest-final-types
 CFLAGS += -Wsuggest-override
 
-BASE_IF_SRC += ../src/Interfaces/InterfaceBase.cpp
+BASE_IF_SRC += ../src/Interfaces/Base.cpp
 BASE_IF_SRC += TestInterface.cpp
 BASE_IF_INC += -I../src/Interfaces/
 BASE_IF_INC += -I../src/RingBuffer/

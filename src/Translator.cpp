@@ -9,6 +9,7 @@
 
 #include "Interfaces/Spi.hpp"
 #include "Interfaces/Uart.hpp"
+#include "Interfaces/I2c.hpp"
 
 Translator *Translator::inst = nullptr;
 
@@ -48,11 +49,14 @@ int Translator::daemon(int argc, char **argv) {
                 return 1;
         }
     }
-    interfaces[0] = new Uart("uart2", "/dev/ttyS2", interface::Mode::READ_ONLY);
-    interfaces[1] = new Spi("spi1", "/dev/spi1", interface::Mode::WRITE_ONLY);
+    interfaces[0] = new uart::Interface("uart2", "/dev/ttyS2", interface::Mode::READ_ONLY);
+    interfaces[1] = new spi::Interface("spi1", "/dev/spi1", interface::Mode::WRITE_ONLY);
+    interfaces[2] = new i2c::Interface("i2c1", "/dev/i2c1", interface::Mode::WRITE_ONLY);
     interfaces[0]->init();
     interfaces[1]->init();
+    interfaces[2]->init();
     interfaces[0]->connect(interfaces[1]);
+    interfaces[0]->connect(interfaces[2]);
     return 0;
 }
 
