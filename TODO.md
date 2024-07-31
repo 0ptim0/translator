@@ -6,3 +6,5 @@
 - [x] add spi
 - [x] add i2c
 - [ ] add can
+- [x] add cmd/config api
+- [ ] cover ringbuf

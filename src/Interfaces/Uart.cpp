@@ -29,23 +29,11 @@ int uart::Interface::init() {
         return -1;
     }
 
-    struct mq_attr attr;
-    attr.mq_flags = 0;
-    attr.mq_maxmsg = 1024;
-    attr.mq_msgsize = sizeof(Message);
-    attr.mq_curmsgs = 0;
-    this->src = mq_open(this->m_queue, O_RDONLY | O_CREAT, 0666, &attr);
-    if (this->src < 0) {
-        syslog(LOG_ERR, "Failed to create queue for %s", this->m_name);
-        syslog(LOG_ERR, "%s", strerror(errno));
-        close(this->fd);
-        return -1;
-    }
-
     this->run();
     return 0;
 }
 
-int uart::Interface::exec(const char *cmd) {
+int uart::Interface::exec(const char *command) {
+    syslog(LOG_DEBUG, "%s: command: %s", this->name(), command);
     return 0;
 }

@@ -6,8 +6,6 @@
 class Translator {
 private:
     static Translator *inst;
-
-private:
     interface::Base *interfaces[interface::max_interfaces] = {0};
 
 private:
@@ -23,16 +21,11 @@ public:
 public:
     int daemon(int argc, char **argv);
     void daemonHelp();
-
-public:
     int commander(int argc, char **argv);
     void commanderHelp();
 
-public:
-    int routine();
-
 private:
-    int verbosity = 0;
+    bool dbg_messages = false;
 };
 
 #endif  // TRANSLATOR

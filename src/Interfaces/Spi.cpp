@@ -32,25 +32,7 @@ int spi::Interface::init() {
         return -1;
     }
 
-    sprintf(this->m_queue, "/mq_%s", this->m_name);
-    struct mq_attr attr;
-    attr.mq_flags = 0;
-    attr.mq_maxmsg = 1024;
-    attr.mq_msgsize = sizeof(Message);
-    attr.mq_curmsgs = 0;
-    this->src = mq_open(this->m_queue, O_RDWR | O_CREAT, 0666, &attr);
-    if (this->src < 0) {
-        syslog(LOG_ERR, "Failed to create queue for %s", this->m_name);
-        syslog(LOG_ERR, "%s", strerror(errno));
-        close(this->fd);
-        return -1;
-    }
-
     this->run();
-    return 0;
-}
-
-int spi::Interface::exec(const char *cmd) {
     return 0;
 }
 
@@ -90,4 +72,9 @@ ssize_t spi::Interface::write(const void *data, size_t size) {
         return -1;
     }
     return size;
+}
+
+int spi::Interface::exec(const char *command) {
+    syslog(LOG_DEBUG, "%s: command: %s", this->name(), command);
+    return 0;
 }

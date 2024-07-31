@@ -10,11 +10,21 @@
 
 using namespace interface;
 
-Base::Base(const char *name, const char *path, Mode mode)
-    : m_mode(mode) {
+Base::Base(const char *name, const char *path, Mode mode) : m_mode(mode) {
     strncpy(this->m_name, name, name_max_length);
     strncpy(this->m_path, path, path_max_length);
-    sprintf(this->m_queue, "/mq_%s", this->m_name);
+    sprintf(this->m_data_queue, "/dmq_%s", this->m_name);
+
+    struct mq_attr attr;
+    attr.mq_flags = 0;
+    attr.mq_maxmsg = 512;
+    attr.mq_msgsize = sizeof(Message);
+    attr.mq_curmsgs = 0;
+    this->src = mq_open(this->m_data_queue, O_RDWR | O_CREAT, 0666, &attr);
+    if (this->src < 0) {
+        syslog(LOG_ERR, "Failed to create queue for %s", this->m_name);
+        syslog(LOG_ERR, "%s", strerror(errno));
+    }
 }
 
 Base::~Base() {
@@ -82,17 +92,15 @@ void *Base::threadTx(void *arg) {
 
 void *Base::threadRx(void *arg) {
     Base *inst = reinterpret_cast<Base *>(arg);
-
-    RingBuffer *ring_buf[max_interfaces];
     Message *msg[max_interfaces];
 
     for (int i = 0; i < max_interfaces; ++i) {
-        ring_buf[i] = new RingBuffer(buf_max_size);
+        inst->rx_ring_buf[i] = new RingBuffer(buf_max_size);
     }
 
     for (int i = 0; i < max_interfaces; ++i) {
         msg[i] = new Message;
-        msg[i]->buf = ring_buf[i];
+        msg[i]->buf = inst->rx_ring_buf[i];
     }
 
     while (1) {
@@ -127,10 +135,32 @@ void *Base::threadRx(void *arg) {
     }
 }
 
+void *Base::threadCmd(void *arg) {
+    Base *inst = reinterpret_cast<Base *>(arg);
+    inst->cmd_ring_buf = new RingBuffer(buf_max_size);
+
+    while (1) {
+        ssize_t rb = inst->cmd_ring_buf->read(inst->cmd_buf, buf_max_size);
+        if (rb < 0) {
+            syslog(LOG_ERR, "%s: failed to receive command msg from queue",
+                   inst->m_name);
+            continue;
+        }
+
+        syslog(LOG_DEBUG, "%s: received command: %s", inst->m_name,
+               inst->cmd_buf);
+
+        if (inst->exec(inst->cmd_buf)) {
+            syslog(LOG_ERR, "%s: failed to execute command: %s", inst->m_name,
+                   inst->cmd_buf);
+        }
+    }
+}
+
 int Base::connect(Base *cons) {
     for (int i = 0; i < max_interfaces; ++i) {
         if (this->dst[i] == 0) {
-            this->dst[i] = mq_open(cons->m_queue, O_WRONLY);
+            this->dst[i] = mq_open(cons->m_data_queue, O_WRONLY);
             if (this->dst[i] < 0) {
                 syslog(LOG_ERR, "Failed to connect queue for %s", this->m_name);
                 syslog(LOG_ERR, "%s", strerror(errno));
@@ -138,7 +168,7 @@ int Base::connect(Base *cons) {
                 return -1;
             }
             syslog(LOG_DEBUG, "%s: connected to %s", this->m_name,
-                   cons->m_queue);
+                   cons->m_data_queue);
             return 0;
         }
     }
@@ -162,6 +192,25 @@ int Base::run() {
         pthread_create(&this->pthread_rx, &rx_attr, this->threadRx,
                        static_cast<Base *>(this));
     }
-
+    pthread_attr_t cmd_attr = {0};
+    pthread_attr_init(&cmd_attr);
+    pthread_attr_setstacksize(&cmd_attr, 4096);
+    pthread_create(&this->pthread_cmd, &cmd_attr, this->threadCmd,
+                   static_cast<Base *>(this));
     return 0;
+}
+
+int Base::configure(const char *command) {
+    ssize_t wb =
+        this->cmd_ring_buf->write(command, strnlen(command, buf_max_size) + 1);
+    if (wb < 0) {
+        syslog(LOG_ERR, "%s: failed to pass command to thread: %s",
+               this->name(), command);
+        return -1;
+    }
+    return 0;
+}
+
+const char *Base::name() {
+    return this->m_name;
 }
