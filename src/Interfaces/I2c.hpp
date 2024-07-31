@@ -1,19 +1,18 @@
-#ifndef SPI
-#define SPI
+#ifndef I2C
+#define I2C
 
-#include <nuttx/spi/spi.h>
+#include <nuttx/i2c/i2c_master.h>
 
 #include "Base.hpp"
 
-namespace spi {
+namespace i2c {
 constexpr size_t trans_buf_size = 1024;
 
 class Interface : public interface::Base {
 private:
-    uint32_t m_frequency = 1000000;
-    uint8_t m_spi_mode = SPIDEV_MODE0;
-    uint8_t m_nbits = 8;
-    uint8_t m_ntrans = 1;
+    uint32_t m_frequency = 100000;
+    uint8_t m_address = 0xAA;
+    uint8_t m_addrlen = 7;
 
 private:
     uint8_t tx_trans_buf[trans_buf_size] = {0};
@@ -29,6 +28,6 @@ public:
     virtual ssize_t write(const void *data, size_t size) override;
     virtual ssize_t read(void *data, size_t size) override;
 };
-}  // namespace spi
+}  // namespace i2c
 
-#endif  // SPI
+#endif  // I2C

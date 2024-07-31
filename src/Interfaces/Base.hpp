@@ -2,28 +2,31 @@
 #define INTERFACE
 
 #include <mqueue.h>
+#include <pthread.h>
 
 namespace interface {
 constexpr int name_max_length = 16;
 constexpr int path_max_length = 32;
 constexpr int queue_path_max_length = 48;
 constexpr int max_interfaces = 8;
-constexpr int buf_max_size = 1024;
+constexpr int buf_max_size = 256;
 enum Mode {
     READ_ONLY = 1,
     WRITE_ONLY = 2,
     READ_WRITE = 3
 };
 
-class InterfaceBase {
+class Base {
 public:
     virtual int init() = 0;
     virtual int exec(const char *cmd) = 0;
+    virtual ssize_t write(const void *data, size_t size);
+    virtual ssize_t read(void *data, size_t size);
 
 public:
-    InterfaceBase() = delete;
-    InterfaceBase(const char *name, const char *path, Mode mode);
-    virtual ~InterfaceBase() = 0;
+    Base() = delete;
+    Base(const char *name, const char *path, Mode mode);
+    virtual ~Base() = 0;
 
 protected:
     char m_name[name_max_length] = {0};
@@ -37,12 +40,16 @@ protected:
     mqd_t dst[max_interfaces] = {0};
     int run();
 
+protected:
+    char tx_buf[buf_max_size] = {0};
+    char rx_buf[buf_max_size] = {0};
+
 public:
     static void *threadRx(void *arg);
     static void *threadTx(void *arg);
 
 public:
-    int connect(InterfaceBase *dst);
+    int connect(Base *dst);
 };
 }  // namespace interface
 

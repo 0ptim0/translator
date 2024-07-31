@@ -1,4 +1,8 @@
 - [x] add libyaml to project
 - [x] add basic classes for main singleton and interfaces
 - [ ] add internal flash as a drive
-- [ ] add unit tests
+- [x] add unit tests
+- [x] add uart
+- [x] add spi
+- [x] add i2c
+- [ ] add can

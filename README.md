@@ -1,5 +1,5 @@
 # Translator
-Provides a commucation bridge between different interfaces
+Firmware for a device that provides a commucation bridge between different interfaces
 
 ### Board
 [Translator PCB](https://oshwlab.com/optim0/translator)  

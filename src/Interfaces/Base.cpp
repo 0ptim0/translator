@@ -1,28 +1,45 @@
-#include "InterfaceBase.hpp"
+#include "Base.hpp"
 
+#include <errno.h>
 #include <fcntl.h>
 #include <syslog.h>
 #include <unistd.h>
-#include <errno.h>
 
 #include "Message.hpp"
 #include "RingBuffer.hpp"
 
 using namespace interface;
 
-InterfaceBase::InterfaceBase(const char *name, const char *path, Mode mode)
+Base::Base(const char *name, const char *path, Mode mode)
     : m_mode(mode) {
     strncpy(this->m_name, name, name_max_length);
     strncpy(this->m_path, path, path_max_length);
     sprintf(this->m_queue, "/mq_%s", this->m_name);
 }
 
-InterfaceBase::~InterfaceBase() {}
+Base::~Base() {
+    if (this->fd > 0) {
+        close(this->fd);
+    }
+    if (this->src > 0) {
+        mq_close(this->src);
+    }
+    for (int i = 0; i < max_interfaces; ++i) {
+        if (this->dst[i] > 0) {
+            mq_close(this->dst[i]);
+        }
+    }
+}
 
-void *InterfaceBase::threadTx(void *arg) {
-    InterfaceBase *inst = reinterpret_cast<InterfaceBase *>(arg);
+ssize_t Base::write(const void *data, size_t size) {
+    return ::write(fd, data, size);
+}
+ssize_t Base::read(void *data, size_t size) {
+    return ::read(fd, data, size);
+}
 
-    char buf[buf_max_size];
+void *Base::threadTx(void *arg) {
+    Base *inst = reinterpret_cast<Base *>(arg);
 
     while (1) {
         unsigned int prio;
@@ -36,8 +53,8 @@ void *InterfaceBase::threadTx(void *arg) {
         }
 
         ssize_t rb = 0;
-        while (rb < msg.size) {
-            rb += msg.buf->read(buf, msg.size);
+        while (static_cast<unsigned>(rb) < msg.size) {
+            rb += msg.buf->read(inst->tx_buf, msg.size);
         }
 
         if (rb <= 0) {
@@ -52,7 +69,7 @@ void *InterfaceBase::threadTx(void *arg) {
 
         ssize_t wb = 0;
         while (wb < rb) {
-            wb += write(inst->fd, buf, rb);
+            wb += inst->write(inst->tx_buf, rb);
         }
 
         if (wb < 0) {
@@ -63,8 +80,8 @@ void *InterfaceBase::threadTx(void *arg) {
     }
 }
 
-void *InterfaceBase::threadRx(void *arg) {
-    InterfaceBase *inst = reinterpret_cast<InterfaceBase *>(arg);
+void *Base::threadRx(void *arg) {
+    Base *inst = reinterpret_cast<Base *>(arg);
 
     RingBuffer *ring_buf[max_interfaces];
     Message *msg[max_interfaces];
@@ -78,11 +95,9 @@ void *InterfaceBase::threadRx(void *arg) {
         msg[i]->buf = ring_buf[i];
     }
 
-    char buf[buf_max_size] = {0};
-
     while (1) {
         unsigned int prio = 1;
-        ssize_t rb = read(inst->fd, buf, buf_max_size);
+        ssize_t rb = inst->read(inst->rx_buf, buf_max_size);
         if (rb <= 0) {
             if (rb < 0)
                 syslog(LOG_ERR, "%s: failed to receive data", inst->m_name);
@@ -94,7 +109,7 @@ void *InterfaceBase::threadRx(void *arg) {
             if (inst->dst[i] > 0) {
                 ssize_t wb = 0;
                 while (wb < rb) {
-                    wb += msg[i]->buf->write(buf, rb);
+                    wb += msg[i]->buf->write(inst->rx_buf, rb);
                 }
                 msg[i]->size = rb;
 
@@ -112,7 +127,7 @@ void *InterfaceBase::threadRx(void *arg) {
     }
 }
 
-int InterfaceBase::connect(InterfaceBase *cons) {
+int Base::connect(Base *cons) {
     for (int i = 0; i < max_interfaces; ++i) {
         if (this->dst[i] == 0) {
             this->dst[i] = mq_open(cons->m_queue, O_WRONLY);
@@ -132,18 +147,20 @@ int InterfaceBase::connect(InterfaceBase *cons) {
     return -1;
 }
 
-int InterfaceBase::run() {
+int Base::run() {
     if (this->m_mode == WRITE_ONLY || this->m_mode == READ_WRITE) {
         pthread_attr_t tx_attr = {0};
         pthread_attr_init(&tx_attr);
+        pthread_attr_setstacksize(&tx_attr, 4096);
         pthread_create(&this->pthread_tx, &tx_attr, this->threadTx,
-                       static_cast<InterfaceBase *>(this));
+                       static_cast<Base *>(this));
     }
     if (this->m_mode == READ_ONLY || this->m_mode == READ_WRITE) {
         pthread_attr_t rx_attr = {0};
         pthread_attr_init(&rx_attr);
+        pthread_attr_setstacksize(&rx_attr, 4096);
         pthread_create(&this->pthread_rx, &rx_attr, this->threadRx,
-                       static_cast<InterfaceBase *>(this));
+                       static_cast<Base *>(this));
     }
 
     return 0;

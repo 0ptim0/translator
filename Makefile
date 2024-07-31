@@ -17,16 +17,17 @@ MAINSRC = main.cpp
 # CSRCS += lib/libyaml/src/writer.c
 
 CXXSRCS += src/Translator.cpp
-CXXSRCS += src/Interfaces/Interface.cpp
+CXXSRCS += src/Interfaces/Base.cpp
 CXXSRCS += src/Interfaces/Uart.cpp
 CXXSRCS += src/Interfaces/Spi.cpp
+CXXSRCS += src/Interfaces/I2c.cpp
 
 # CFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/lib/libyaml/include
 # CFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/include
 CFLAGS += -DHAVE_CONFIG_H
 CXXFLAGS += ${CFLAGS}
 CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/
-CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/interfaces
+CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/Interfaces
 CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/RingBuffer
 
 # VPATH += :lib/libyaml/src

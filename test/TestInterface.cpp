@@ -6,7 +6,7 @@
 #include <syslog.h>
 #include <unistd.h>
 
-#include "InterfaceBase.hpp"
+#include "Base.hpp"
 #include "Message.hpp"
 #include "probe.h"
 
@@ -15,20 +15,18 @@ using namespace interface;
 char test_file_1[] = "test_file_1.txt";
 char test_file_2[] = "test_file_2.txt";
 
-class TestInterface : public InterfaceBase {
+class TestInterface : public Base {
 public:
     TestInterface(const char *name, const char *path, Mode mode)
-        : InterfaceBase(name, path, mode) {}
+        : Base(name, path, mode) {
+    }
 
     ~TestInterface() {
         mq_close(this->src);
         close(this->fd);
     }
 
-    int init() override { return 0; }
-
-    int exec(const char *cmd) override {
-        (void)cmd;
+    int init() override {
         this->fd = open(this->m_path, O_RDWR);
         if (this->fd < 0) {
             syslog(LOG_ERR, "Failed to open %s in %s", this->m_name,
@@ -43,7 +41,7 @@ public:
         attr.mq_maxmsg = 10;
         attr.mq_msgsize = sizeof(Message);
         attr.mq_curmsgs = 0;
-        this->src = mq_open(this->m_queue, O_RDONLY | O_CREAT, 0666, &attr);
+        this->src = mq_open(this->m_queue, O_RDWR | O_CREAT, 0666, &attr);
         if (this->src < 0) {
             syslog(LOG_ERR, "Failed to create queue for %s", this->m_name);
             syslog(LOG_ERR, "%s", strerror(errno));
@@ -52,6 +50,11 @@ public:
         }
 
         this->run();
+        return 0;
+    }
+
+    int exec(const char *cmd) override {
+        (void)cmd;
         return 0;
     }
 };
@@ -74,11 +77,11 @@ TEST(InterfaceReadWrite) {
     close(fd);
 
     // Init two interfaces
-    InterfaceBase *if1 = new TestInterface("tf1", test_file_1, READ_ONLY);
-    InterfaceBase *if2 = new TestInterface("tf2", test_file_2, WRITE_ONLY);
+    Base *if1 = new TestInterface("tf1", test_file_1, READ_ONLY);
+    Base *if2 = new TestInterface("tf2", test_file_2, WRITE_ONLY);
     if1->connect(if2);
-    if1->exec("");
-    if2->exec("");
+    if1->init();
+    if2->init();
     sleep(1);
 
     // Check that data matches
