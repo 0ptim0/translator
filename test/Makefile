@@ -3,6 +3,7 @@ PROBE_SRC += ../tools/probe/probe.c
 DEFINES += -DPROBE_USE_STDIO
 CXX = g++
 
+CFLAGS += -g3
 CFLAGS += -Wall
 CFLAGS += -Wextra
 CFLAGS += -Werror
@@ -33,4 +34,10 @@ BASE_IF_INC += -I../src/Interfaces/
 BASE_IF_INC += -I../src/RingBuffer/
 
 test_interface:
-	$(CXX) $(PROBE_INC) $(PROBE_SRC) $(BASE_IF_SRC) $(BASE_IF_INC) $(DEFINES) $(CFLAGS) -o TestInterface
+	$(CXX) $(PROBE_INC) $(PROBE_SRC) $(BASE_IF_SRC) $(BASE_IF_INC) $(DEFINES) $(CFLAGS) -o TestInterface.test
+
+RINGBUF_SRC += RingBuffer.cpp
+RINGBUF_INC += -I../src/RingBuffer/
+
+test_ringbuf:
+	$(CXX) $(PROBE_INC) $(PROBE_SRC) $(RINGBUF_INC) $(RINGBUF_SRC) $(DEFINES) $(CFLAGS) -o RingBuffer.test

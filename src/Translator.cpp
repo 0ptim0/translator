@@ -61,9 +61,6 @@ int Translator::daemon(int argc, char **argv) {
     return 0;
 }
 
-void Translator::commanderHelp() {
-}
-
 int Translator::commander(int argc, char **argv) {
     auto help = [] {
         printf("Usage: translator [-h] [-i] [-c]\n");
@@ -72,15 +69,15 @@ int Translator::commander(int argc, char **argv) {
         printf("  -i \t Interface\n");
         printf("  -c \t Command\n");
     };
-    char *commander_interface = nullptr, *commander_command = nullptr;
+    char *commander_interface = nullptr, *commander_options = nullptr;
     int opt = 0;
-    while ((opt = getopt(argc, argv, "hi:c:")) != -1) {
+    while ((opt = getopt(argc, argv, "hi:o:")) != -1) {
         switch (opt) {
             case 'i':
                 commander_interface = optarg;
                 break;
-            case 'c':
-                commander_command = optarg;
+            case 'o':
+                commander_options = optarg;
                 break;
             default:
                 syslog(LOG_ERR, "Unknown argument");
@@ -89,7 +86,7 @@ int Translator::commander(int argc, char **argv) {
                 return 1;
         }
     }
-    if (commander_interface == nullptr || commander_command == nullptr) {
+    if (commander_interface == nullptr || commander_options == nullptr) {
         syslog(LOG_ERR, "Specify both interface and command");
         help();
         return 1;
@@ -98,7 +95,7 @@ int Translator::commander(int argc, char **argv) {
         if (this->interfaces[i] == nullptr) break;
         if (strncmp(interfaces[i]->name(), commander_interface,
                     interface::name_max_length) == 0) {
-            interfaces[i]->configure(commander_command);
+            interfaces[i]->configure(commander_options);
             return 0;
         }
     }

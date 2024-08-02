@@ -25,7 +25,7 @@ public:
 
 public:
     virtual int init() override;
-    virtual int exec(const char *cmd) override;
+    virtual int exec(const char *command) override;
     virtual ssize_t write(const void *data, size_t size) override;
     virtual ssize_t read(void *data, size_t size) override;
 };

@@ -17,7 +17,7 @@ private:
     pthread_cond_t not_empty;
 
 public:
-    RingBuffer(int size = 1024) : m_size(size), head(0), tail(0) {
+    RingBuffer(int size = 1024) : m_size(size), head(-1), tail(0) {
         buffer = new char[m_size];
         pthread_mutex_init(&mtx, NULL);
         pthread_cond_init(&not_full, NULL);
@@ -63,8 +63,15 @@ public:
 
         pthread_mutex_lock(&mtx);
 
-        while (freeSpace() < size) {
+        size = size > freeSpace() ? freeSpace() : size;
+
+        while (full()) {
             pthread_cond_wait(&not_full, &mtx);
+        }
+
+        if (empty()) {
+            head = 0;
+            tail = 0;
         }
 
         for (size_t i = 0; i < size; ++i) {
@@ -85,16 +92,21 @@ public:
 
         pthread_mutex_lock(&mtx);
 
-        while (head == tail) {
+        while (empty()) {
             pthread_cond_wait(&not_empty, &mtx);
         }
 
-        size_t max_size = this->m_size - freeSpace();
+        size_t max_size = currentSize();
         max_size = size < max_size ? size : max_size;
 
         for (size_t i = 0; i < max_size; ++i) {
             buf[i] = buffer[head];
             head = (head + 1) % this->m_size;
+        }
+
+        if (head == tail) {
+            head = -1;
+            tail = 0;
         }
 
         pthread_cond_signal(&not_full);
@@ -103,7 +115,29 @@ public:
         return max_size;
     }
 
-    size_t freeSpace() const { return (head - tail - 1 + m_size) % m_size; }
+    bool full() const {
+        return head == tail;
+    }
+
+    bool empty() const {
+        return head < 0;
+    }
+
+    size_t currentSize() const {
+        if (full()) {
+            return m_size;
+        } else if (empty()) {
+            return 0;
+        } else if (head < tail) {
+            return tail - head;
+        } else {
+            return tail + m_size - head;
+        }
+    }
+
+    size_t freeSpace() const {
+        return m_size - currentSize();
+    }
 };
 
 #endif  // RINGBUFFER

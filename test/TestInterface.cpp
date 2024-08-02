@@ -5,6 +5,7 @@
 #include <string.h>
 #include <syslog.h>
 #include <unistd.h>
+#include <sys/resource.h>
 
 #include "Base.hpp"
 #include "Message.hpp"
@@ -22,8 +23,6 @@ public:
     }
 
     ~TestInterface() {
-        mq_close(this->src);
-        close(this->fd);
     }
 
     int init() override {
@@ -36,19 +35,6 @@ public:
         }
         syslog(LOG_DEBUG, "%s: %s is open", this->m_name, this->m_path);
 
-        struct mq_attr attr;
-        attr.mq_flags = 0;
-        attr.mq_maxmsg = 10;
-        attr.mq_msgsize = sizeof(Message);
-        attr.mq_curmsgs = 0;
-        this->src = mq_open(this->m_queue, O_RDWR | O_CREAT, 0666, &attr);
-        if (this->src < 0) {
-            syslog(LOG_ERR, "Failed to create queue for %s", this->m_name);
-            syslog(LOG_ERR, "%s", strerror(errno));
-            close(this->fd);
-            return -1;
-        }
-
         this->run();
         return 0;
     }
@@ -60,7 +46,7 @@ public:
 };
 
 TEST(InterfaceReadWrite) {
-    openlog("InterfaceEssentials", LOG_PID | LOG_CONS, LOG_USER);
+    openlog("InterfaceReadWrite", LOG_PID | LOG_CONS, LOG_USER);
     char text[1024] =
         "Interface #1 writes to Interface #2 through message queue";
 
@@ -75,6 +61,11 @@ TEST(InterfaceReadWrite) {
 
     fd = open(test_file_2, O_RDWR | O_CREAT, 0777);
     close(fd);
+
+    struct rlimit limit;
+    limit.rlim_cur = 8192;
+    limit.rlim_max = 8192;
+    setrlimit(RLIMIT_MSGQUEUE, &limit);
 
     // Init two interfaces
     Base *if1 = new TestInterface("tf1", test_file_1, READ_ONLY);

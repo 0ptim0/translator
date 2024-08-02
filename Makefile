@@ -18,5 +18,6 @@ CXXFLAGS += ${CFLAGS}
 CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/
 CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/Interfaces
 CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/RingBuffer
+CXXFLAGS += ${INCDIR_PREFIX}$(APPDIR)/translator/src/Cli
 
 include $(APPDIR)/Application.mk

@@ -34,6 +34,61 @@ int uart::Interface::init() {
 }
 
 int uart::Interface::exec(const char *command) {
+    auto help = [] {
+        printf("Available options:\n");
+        for (size_t i = 0; i < sizeof(commands) / sizeof(command[0]); ++i) {
+            printf("\t%s\t - %s\n", commands[i].opt, commands[i].desc);
+        }
+    };
+
     syslog(LOG_DEBUG, "%s: command: %s", this->name(), command);
+    if (strstr(command, "help")) {
+        help();
+        return 0;
+    }
+
+    char *r = NULL;
+    char *token = strtok_r(const_cast<char *>(command), ",", &r);
+
+    if (token == NULL) {
+        if (strlen(command)) {
+            token = const_cast<char *>(command);
+        } else {
+            help();
+            return -1;
+        }
+    }
+
+    printf("%lu, %lu\n", sizeof(commands), sizeof(commands[0]));
+
+    while (token != NULL) {
+        char *option = NULL;
+        char *value = NULL;
+        char *ropt = NULL;
+        option = strtok_r(token, "=", &ropt);
+        value = strtok_r(NULL, "=", &ropt);
+        for (size_t i = 0; i < sizeof(commands) / sizeof(commands[0]); ++i) {
+            if (strncmp(option, commands[i].opt, MAX_INPUT) == 0) {
+                syslog(LOG_DEBUG, "%s: executing command: %s", this->name(),
+                       command);
+                commands[i].handler(this, value);
+            }
+        }
+        token = strtok_r(NULL, ",", &r);
+    }
+    return 0;
+}
+
+int uart::Interface::setBaud(void *inst, void *arg) {
+    auto t = reinterpret_cast<uart::Interface *>(inst);
+    syslog(LOG_DEBUG, "%s: executing: %s", t->name(), __func__);
+    t->baudrate = atoi(reinterpret_cast<const char *>(arg));
+    return 0;
+}
+
+int uart::Interface::setStopBits(void *inst, void *arg) {
+    auto t = reinterpret_cast<uart::Interface *>(inst);
+    syslog(LOG_DEBUG, "%s: executing: %s", t->name(), __func__);
+    t->stop_bits = atoi(reinterpret_cast<const char *>(arg));
     return 0;
 }

@@ -20,9 +20,7 @@ public:
 
 public:
     int daemon(int argc, char **argv);
-    void daemonHelp();
     int commander(int argc, char **argv);
-    void commanderHelp();
 
 private:
     bool dbg_messages = false;
