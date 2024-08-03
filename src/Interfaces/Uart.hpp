@@ -1,6 +1,8 @@
 #ifndef UART
 #define UART
 
+#include <termios.h>
+
 #include "Base.hpp"
 #include "Cli.hpp"
 
@@ -10,6 +12,7 @@ class Interface : public interface::Base {
 private:
     unsigned baudrate = 115200;
     uint8_t stop_bits = 1;
+    struct termios termios = {0};
 
 public:
     Interface(const char *name, const char *path, interface::Mode mode);

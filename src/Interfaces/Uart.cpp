@@ -83,6 +83,12 @@ int uart::Interface::setBaud(void *inst, void *arg) {
     auto t = reinterpret_cast<uart::Interface *>(inst);
     syslog(LOG_DEBUG, "%s: executing: %s", t->name(), __func__);
     t->baudrate = atoi(reinterpret_cast<const char *>(arg));
+    int rv = tcgetattr(t->fd, &t->termios);
+    rv |= cfsetspeed(&t->termios, t->baudrate);
+    if (rv < 0) {
+        syslog(LOG_ERR, "%s: failed: %s", t->name(), __func__);
+        return -1;
+    }
     return 0;
 }
 
