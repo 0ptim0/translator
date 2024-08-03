@@ -4,4 +4,4 @@ build
 .depend
 Make.dep
 __tmp*
-.test
+*.test
